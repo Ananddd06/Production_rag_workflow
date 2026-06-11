@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🚀 Enterprise RAG Platform with Full-Stack AI Observability
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -7,30 +5,22 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Production-grade RAG system with real-time monitoring, cost tracking, and 100% local deployment using open-source models.**
+Production-grade RAG system with real-time monitoring, cost tracking, and 100% local deployment using open-source models.
 
-**[🎯 Quick Start](#-getting-started)** • **[📚 API Docs](http://localhost:8000/docs)** • **[🏗️ Architecture](#️-technical-architecture--the-100-hugging-face-ecosystem)**
-
----
-
-### Why This Exists
+## Why This Exists
 
 Most companies can't use OpenAI for internal documents due to data privacy requirements. This platform solves that with a fully self-hosted RAG system that eliminates hallucinations, tracks costs per query, and monitors quality in real-time.
 
 **Key Problems Solved:** Hallucinations • Data Privacy Violations • Unpredictable API Costs • Zero Observability
 
-</div>
-
----
-
-<details open>
-<summary><h2>🎯 The Business Case: Why This Architecture Wins</h2></summary>
+## 🎯 The Business Case
 
 When an interviewer or CTO asks, *"Why can't we just plug our documents into OpenAI?"* this project is the exact engineering answer. 
 
 Out-of-the-box proprietary LLMs fail in enterprise settings due to strict data privacy compliance risks (sending sensitive corporate data to external servers), factual inaccuracies, and unpredictable billing. This platform acts as a secure, monitored middle-layer that guarantees AI answers are restricted to private corporate data, ensuring zero data leakage by relying purely on Hugging Face open-source models, while providing a Next.js dashboard for real-time operational transparency.
 
-### Why API Cost Monitoring is Critical for the Industry
+### Why API Cost Monitoring is Critical
+
 The unit economics of Generative AI are fundamentally different from traditional SaaS. In standard web apps, a database query costs fractions of a cent. In Generative AI, passing a large document context to an LLM scales linearly with the token count and can cost dollars *per query*. 
 
 Without granular, token-level observability, industries face:
@@ -40,17 +30,14 @@ Without granular, token-level observability, industries face:
 
 This project solves this by tracking the fractional cost of every single micro-step (BM25, Semantic Search, Generation) and rendering it in a real-time financial dashboard.
 
-</details>
-
----
-
-<details>
-<summary><h2>🧠 The Mechanics: What is RAG and Why Does It Prevent Hallucinations?</h2></summary>
+## 🧠 What is RAG and Why Does It Prevent Hallucinations?
 
 ### The Hallucination Problem
+
 Large Language Models (LLMs) are autocomplete engines on steroids. If you ask an LLM about your company's proprietary 2026 HR Policy, it doesn't know the answer because it was never trained on your private data. Instead of saying "I don't know," the LLM will confidently guess or "hallucinate" an entirely fabricated policy. In a corporate setting, a hallucinated legal clause, medical diagnosis, or technical instruction is catastrophic.
 
 ### The RAG Solution
+
 **Retrieval-Augmented Generation (RAG)** forces the LLM to take an "open-book test". Instead of relying on its internal memory, the workflow is:
 1. The user asks a question.
 2. The system searches a database of your private documents and retrieves the 3 most relevant paragraphs.
@@ -59,12 +46,7 @@ Large Language Models (LLMs) are autocomplete engines on steroids. If you ask an
 
 By forcing the LLM to read your specific documents at runtime, RAG mathematically grounds the LLM in reality, reducing hallucination rates to near zero.
 
-</details>
-
----
-
-<details>
-<summary><h2>🏗️ Technical Architecture & The 100% Hugging Face Ecosystem</h2></summary>
+## 🏗️ Technical Architecture
 
 A major architectural decision in this project was to rely **entirely on Hugging Face open-source models**. By avoiding proprietary APIs like OpenAI or Anthropic, this architecture allows enterprises to run the entire stack locally or on private clouds (VPCs), guaranteeing 100% data privacy (SOC2/HIPAA compliance).
 
@@ -77,9 +59,7 @@ A major architectural decision in this project was to rely **entirely on Hugging
 | **5. Cross-Encoder Reranking** | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Initial retrieval is noisy. A Cross-Encoder neural network takes the user's query and the retrieved chunk and analyzes them *together*, scoring their exact relevance. It violently filters out irrelevant data that tricked the initial vector search. |
 | **6. Generation** | `Qwen/Qwen2.5-7B-Instruct` | The finalized, highly-curated context is passed to the Qwen 7B instruction-tuned model via Hugging Face. This model synthesizes the final human-readable answer and applies citations. |
 
----
-
-## 📊 Observability & Telemetry (The Next.js Dashboard)
+## 📊 Observability & Telemetry
 
 Building the AI is 20% of the work; operating it safely is the other 80%. The Next.js frontend acts as a "Mission Control" for the RAG pipeline.
 
@@ -89,8 +69,6 @@ Building the AI is 20% of the work; operating it safely is the other 80%. The Ne
 | **Latency Breakdown** | Python `time.perf_counter()` tracking milliseconds per pipeline phase. | Identifies bottlenecks. If a query takes 4 seconds, the dashboard shows if it was the LLM or the Vector DB causing the delay. |
 | **Hallucination Rate** | Algorithmic check ensuring the LLM cited the provided source documents. | Identifies "rogue" AI behavior. A high rate means the prompt or reranker needs immediate adjustment. |
 | **User Feedback** | Thumbs Up / Thumbs Down buttons explicitly tied to unique `query_id`s. | Creates a continuous learning loop. Bad responses are flagged instantly for human review. |
-
----
 
 ## 🏢 Industry Use Cases
 
@@ -103,8 +81,6 @@ This architecture is not a toy; it is the exact blueprint used by Fortune 500 co
 | **Finance & Banking** | Parsing 10-K reports and internal financial policies. | Data privacy is paramount. By avoiding OpenAI and utilizing **Hugging Face open-source models**, banks can ensure PII never leaves their private servers. |
 | **Software Engineering** | Internal developer wikis and codebase Q&A. | The **Hybrid Retrieval (BM25)** ensures exact code snippets and specific error codes are found perfectly, which pure semantic search often misses. |
 
----
-
 ## 💻 Tech Stack Summary
 
 | Layer | Technologies |
@@ -115,12 +91,7 @@ This architecture is not a toy; it is the exact blueprint used by Fortune 500 co
 | **AI & NLP Pipeline** | Hugging Face ecosystem (SentenceTransformers, Qwen, Cross-Encoders) |
 | **Storage & Databases** | ChromaDB (Vector Search), SQLite (Telemetry Logging) |
 
-</details>
-
----
-
-<details>
-<summary><h2>📁 Project Structure</h2></summary>
+## 📁 Project Structure
 
 ```
 rag/
@@ -155,50 +126,24 @@ rag/
 └── README.md                   # This file
 ```
 
-</details>
-
----
-
 ## 🚀 Getting Started
 
-<div align="center">
+### Docker Quick Start (Recommended)
 
-### 🐳 Docker Quick Start (Recommended)
-
-</div>
-
-<table>
-<tr>
-<td width="33%" align="center">
-
-**1️⃣ Clone**
 ```bash
+# 1. Clone the repository
 git clone <repo-url>
 cd rag
-```
 
-</td>
-<td width="33%" align="center">
-
-**2️⃣ Launch**
-```bash
+# 2. Launch containers
 docker-compose up -d
+
+# 3. Access the application
+# Dashboard: http://localhost:3000
+# API Docs: http://localhost:8000/docs
 ```
 
-</td>
-<td width="33%" align="center">
-
-**3️⃣ Access**
-[Dashboard](http://localhost:3000) • [API](http://localhost:8000/docs)
-
-</td>
-</tr>
-</table>
-
----
-
-<details>
-<summary><h3>💻 Local Development Setup (Click to expand)</h3></summary>
+### Local Development Setup
 
 **Backend:**
 ```bash
@@ -216,12 +161,7 @@ npm install
 npm run dev
 ```
 
-</details>
-
----
-
-<details>
-<summary><h2>🔧 Configuration</h2></summary>
+## 🔧 Configuration
 
 ### Environment Variables
 
@@ -247,12 +187,7 @@ RERANK_TOP_N=3
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-</details>
-
----
-
-<details>
-<summary><h2>🔬 Why This Project Matters</h2></summary>
+## 🔬 Why This Project Matters
 
 ### The Critical Problem: Enterprise AI is Broken
 
@@ -274,8 +209,6 @@ This project is the **antidote**: a fully self-hosted, monitored, and cost-contr
 | No latency insights | Millisecond-level pipeline profiling |
 | Manual quality checks | Automated hallucination detection |
 | No feedback loop | Thumbs up/down with query IDs |
-
----
 
 ## 🧪 How RAG Prevents Hallucinations: A Technical Deep-Dive
 
@@ -302,8 +235,6 @@ Grounded Answer + Citations
 4. **Citation Enforcement**: The prompt explicitly forbids the LLM from using external knowledge
 
 **Result:** Hallucination rates drop from ~40% to <5%.
-
----
 
 ## 💰 Why Cost Monitoring is Mission-Critical
 
@@ -336,8 +267,6 @@ The dashboard aggregates this into:
 - **Cost trend over time** (detect anomalies)
 - **ROI calculations** (AI cost vs. human labor savings)
 
----
-
 ## 📈 Observability Dashboard Features
 
 ### Real-Time Metrics
@@ -365,12 +294,7 @@ The dashboard automatically suggests:
 - "Increase cache TTL" (if many duplicate queries)
 - "Reduce context window" (if LLM costs dominate)
 
-</details>
-
----
-
-<details>
-<summary><h2>🏭 Production Deployment Checklist</h2></summary>
+## 🏭 Production Deployment Checklist
 
 ### Security
 - [ ] Enable authentication (JWT tokens, API keys)
@@ -398,12 +322,7 @@ The dashboard automatically suggests:
 - [ ] Model versioning (track which LLM served each query)
 - [ ] Backup strategy (vector DB + SQLite snapshots)
 
-</details>
-
----
-
-<details>
-<summary><h2>🔒 Data Privacy Guarantees</h2></summary>
+## 🔒 Data Privacy Guarantees
 
 ### Why Companies Can't Use OpenAI for Internal Docs
 1. **Data leaves your infrastructure** → OpenAI stores prompts for 30 days
@@ -417,8 +336,6 @@ The dashboard automatically suggests:
 ✅ **Audit trail** → Every query logged in your SQLite DB  
 ✅ **Model portability** → Swap Qwen for any Hugging Face model instantly  
 ✅ **Air-gapped deployment** → Can run without internet access  
-
----
 
 ## 🧠 Advanced RAG Techniques Implemented
 
@@ -452,8 +369,6 @@ Each document chunk gets **three** embeddings:
 - **Sparse embedding** (BM25 term frequency)
 - **Title embedding** (for section-header matching)
 
----
-
 ## 🎓 Learning Outcomes & Interview Talking Points
 
 If you built/understand this project, you can confidently discuss:
@@ -476,12 +391,7 @@ If you built/understand this project, you can confidently discuss:
 - A/B testing (comparing retrieval strategies)
 - Incident response (what to do when hallucinations spike)
 
-</details>
-
----
-
-<details>
-<summary><h2>🤝 Contributing</h2></summary>
+## 🤝 Contributing
 
 Contributions are welcome! Focus areas:
 - **Retrieval improvements** (graph RAG, multi-hop reasoning)
@@ -489,25 +399,15 @@ Contributions are welcome! Focus areas:
 - **Advanced monitoring** (drift detection, anomaly alerts)
 - **Frontend enhancements** (query comparison, diff view)
 
-</details>
-
----
-
-<div align="center">
-
 ## 📜 License
 
 MIT License - See [LICENSE](LICENSE) for details
-
----
 
 ## 🙏 Acknowledgments
 
 **Hugging Face** • **ChromaDB** • **FastAPI** • **Next.js** • **Vercel**
 
 For democratizing AI and building incredible open-source tools
-
----
 
 ## 📚 Further Reading
 
@@ -518,14 +418,4 @@ For democratizing AI and building incredible open-source tools
 
 ---
 
-<div align="center">
-
-### Built with ❤️ for the AI engineering community
-
 **Star ⭐ if this helps your RAG journey!**
-
-[⬆ Back to Top](#-enterprise-grade-rag--full-stack-ai-observability-platform)
-
-</div>
-
-</div>
