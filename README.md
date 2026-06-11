@@ -1,24 +1,23 @@
 <div align="center">
 
-# 🚀 Enterprise-Grade RAG & Full-Stack AI Observability Platform
+# 🚀 Enterprise RAG Platform with Full-Stack AI Observability
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Next.js](https://img.shields.io/badge/Next.js-15+-black.svg)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### Solving Enterprise AI's Hardest Problems
-**Hallucinations** • **Latency Bottlenecks** • **Data Privacy** • **Runaway API Costs**
+**Production-grade RAG system with real-time monitoring, cost tracking, and 100% local deployment using open-source models.**
 
-**[🎯 Quick Start](#-getting-started)** • **[📊 Live Demo](#)** • **[📚 API Docs](http://localhost:8000/docs)** • **[🤝 Contributing](#-contributing)**
-
-</div>
+**[🎯 Quick Start](#-getting-started)** • **[📚 API Docs](http://localhost:8000/docs)** • **[🏗️ Architecture](#️-technical-architecture--the-100-hugging-face-ecosystem)**
 
 ---
 
-<div align="center">
+### Why This Exists
 
-### ⚡ Production-Ready • 🔒 100% Private • 💰 Cost-Optimized
+Most companies can't use OpenAI for internal documents due to data privacy requirements. This platform solves that with a fully self-hosted RAG system that eliminates hallucinations, tracks costs per query, and monitors quality in real-time.
+
+**Key Problems Solved:** Hallucinations • Data Privacy Violations • Unpredictable API Costs • Zero Observability
 
 </div>
 
