@@ -13,7 +13,7 @@ import uuid
 from contextlib import asynccontextmanager
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -305,40 +305,68 @@ async def query_endpoint(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-@app.post("/api/ingest")
-async def ingest_text(
-    text: Optional[str] = Form(None),
-    metadata: Optional[str] = Form(None),
-    file: Optional[UploadFile] = File(None),
-):
-    """Ingest text or an uploaded file into the vector store."""
+def process_upload_task(file_bytes: Optional[bytes], file_name: Optional[str], is_pdf: bool, text_input: Optional[str], metadata: dict):
+    """Synchronous background task to process document chunks and add to vector store."""
     try:
         vector_store: VectorStore = components["vector_store"]
         document_loader: DocumentLoader = components["document_loader"]
         monitoring_db: MonitoringDB = components["monitoring_db"]
 
         chunks = []
-
-        if file is not None:
-            if file.filename.lower().endswith('.pdf'):
-                import pypdf
-                import io
+        if file_bytes is not None and file_name is not None:
+            if is_pdf:
+                import fitz
                 content = ""
-                reader = pypdf.PdfReader(io.BytesIO(await file.read()))
-                for page in reader.pages:
-                    text = page.extract_text()
+                doc = fitz.open(stream=file_bytes, filetype="pdf")
+                for page in doc:
+                    text = page.get_text("text")
                     if text:
                         content += text + "\n"
                 chunks = document_loader.load_text(
-                    content, metadata={"filename": file.filename, "source": file.filename}
+                    content, metadata={"filename": file_name, "source": file_name}
                 )
             else:
-                content = (await file.read()).decode("utf-8", errors="replace")
+                content = file_bytes.decode("utf-8", errors="replace")
                 chunks = document_loader.load_text(
-                    content, metadata={"filename": file.filename, "source": file.filename}
+                    content, metadata={"filename": file_name, "source": file_name}
                 )
+        elif text_input is not None:
+            chunks = document_loader.load_text(text_input, metadata=metadata)
+
+        if chunks:
+            vector_store.add_documents(chunks)
+            # update BM25 index
+            components["retriever"]._build_bm25_index()
+
+        monitoring_db.log_event(
+            "ingest",
+            f"Ingested {len(chunks)} chunks",
+            {"source": file_name if file_name else "text_input", "chunks": len(chunks)},
+        )
+        logger.info(f"Background ingest completed for {file_name if file_name else 'text_input'}: {len(chunks)} chunks added.")
+    except Exception as exc:
+        logger.error(f"Background ingest failed: {exc}\n{traceback.format_exc()}")
+
+
+@app.post("/api/ingest")
+async def ingest_text(
+    background_tasks: BackgroundTasks,
+    text: Optional[str] = Form(None),
+    metadata: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None),
+):
+    """Queue text or an uploaded file for ingestion into the vector store."""
+    try:
+        file_bytes = None
+        file_name = None
+        is_pdf = False
+        meta = {}
+
+        if file is not None:
+            file_bytes = await file.read()
+            file_name = file.filename
+            is_pdf = file.filename.lower().endswith('.pdf')
         elif text is not None:
-            meta = {}
             if metadata:
                 import json
                 try:
@@ -347,34 +375,30 @@ async def ingest_text(
                     meta = {}
             if "source" not in meta:
                 meta["source"] = "text_input"
-            chunks = document_loader.load_text(text, metadata=meta)
         else:
             raise HTTPException(
                 status_code=400, detail="Provide either 'text' or a file upload."
             )
 
-        if chunks:
-            vector_store.add_documents(chunks)
-            # update BM25 index
-            components["retriever"]._build_bm25_index()
-
-
-
-        monitoring_db.log_event(
-            "ingest",
-            f"Ingested {len(chunks)} chunks",
-            {"source": file.filename if file else "text_input", "chunks": len(chunks)},
+        background_tasks.add_task(
+            process_upload_task,
+            file_bytes=file_bytes,
+            file_name=file_name,
+            is_pdf=is_pdf,
+            text_input=text,
+            metadata=meta
         )
 
         return {
-            "chunks_added": len(chunks),
-            "total_documents": vector_store.get_stats().get("document_count", 0),
+            "status": "processing",
+            "message": "Document ingestion started in the background",
+            "source": file_name if file else "text_input"
         }
 
     except HTTPException:
         raise
     except Exception as exc:
-        logger.error(f"Ingest failed: {exc}\n{traceback.format_exc()}")
+        logger.error(f"Ingest setup failed: {exc}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(exc))
 
 
@@ -403,38 +427,46 @@ async def delete_document(source: str):
         logger.error(f"Delete document error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/ingest/directory")
-async def ingest_directory(request: IngestDirectoryRequest):
-    """Ingest all documents from a local directory."""
+def process_directory_task(path: str):
+    """Synchronous background task to ingest a directory."""
     try:
         vector_store: VectorStore = components["vector_store"]
         document_loader: DocumentLoader = components["document_loader"]
         monitoring_db: MonitoringDB = components["monitoring_db"]
 
-        if not os.path.isdir(request.path):
-            raise HTTPException(status_code=400, detail=f"Directory not found: {request.path}")
-
-        chunks = document_loader.load_directory(request.path)
+        chunks = document_loader.load_directory(path)
         if chunks:
             vector_store.add_documents(chunks)
-            # update BM25 index
             components["retriever"]._build_bm25_index()
 
         monitoring_db.log_event(
             "ingest",
             f"Ingested {len(chunks)} chunks from directory",
-            {"source": request.path, "chunks": len(chunks)},
+            {"source": path, "chunks": len(chunks)},
         )
+        logger.info(f"Background directory ingest completed for {path}: {len(chunks)} chunks added.")
+    except Exception as exc:
+        logger.error(f"Background directory ingest failed: {exc}\n{traceback.format_exc()}")
+
+
+@app.post("/api/ingest/directory")
+async def ingest_directory(request: IngestDirectoryRequest, background_tasks: BackgroundTasks):
+    """Queue a local directory for ingestion."""
+    try:
+        if not os.path.isdir(request.path):
+            raise HTTPException(status_code=400, detail=f"Directory not found: {request.path}")
+
+        background_tasks.add_task(process_directory_task, path=request.path)
 
         return {
-            "chunks_added": len(chunks),
-            "total_documents": vector_store.get_stats().get("document_count", 0),
+            "status": "processing",
+            "message": f"Directory ingestion started in the background for {request.path}"
         }
 
     except HTTPException:
         raise
     except Exception as exc:
-        logger.error(f"Directory ingest failed: {exc}\n{traceback.format_exc()}")
+        logger.error(f"Directory ingest setup failed: {exc}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(exc))
 
 

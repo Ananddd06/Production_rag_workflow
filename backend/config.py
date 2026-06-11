@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     # --- HuggingFace ---
     HF_API_TOKEN: str = ""
     HF_MODEL_ID: str = "mistralai/Mistral-7B-Instruct-v0.3"
-    HF_EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
-    HF_RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    HF_EMBEDDING_MODEL: str = "BAAI/bge-base-en-v1.5"
+    HF_RERANKER_MODEL: str = "BAAI/bge-reranker-base"
 
     # --- Storage ---
     CHROMA_PERSIST_DIR: str = "./chroma_db"
