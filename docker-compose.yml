@@ -1,7 +1,7 @@
 # ============================================================
 # Production RAG System — Docker Compose
+# Backend + Frontend
 # ============================================================
-version: '3.8'
 
 services:
   backend:
@@ -50,6 +50,7 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
 volumes:
   rag_chroma_data:
     driver: local

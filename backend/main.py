@@ -33,6 +33,8 @@ from monitoring.alerts import AlertManager
 from ingest.document_loader import DocumentLoader
 from monitoring.tracker import LatencyTracker, CostTracker
 
+
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -175,6 +177,8 @@ app.add_middleware(
 )
 
 
+
+
 # ---------------------------------------------------------------------------
 # ENDPOINTS
 # ---------------------------------------------------------------------------
@@ -216,6 +220,8 @@ async def query_endpoint(request: QueryRequest):
             cached["cached"] = True
             cached["query_id"] = query_id
             return cached
+
+
 
         # ---- 1. Preprocessing ----
         with latency_tracker.track("preprocessing"):
@@ -351,6 +357,8 @@ async def ingest_text(
             vector_store.add_documents(chunks)
             # update BM25 index
             components["retriever"]._build_bm25_index()
+
+
 
         monitoring_db.log_event(
             "ingest",
