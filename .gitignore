@@ -3,6 +3,7 @@
 .env.local
 backend/.env
 frontend-next/.env.local
+recruiter_presentation.md
 
 # Python
 __pycache__/
