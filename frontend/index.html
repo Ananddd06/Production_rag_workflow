@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Production-grade RAG system monitoring dashboard with real-time metrics, latency tracking, cost analysis, and quality monitoring.">
+  <title>RAG Production Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">⚡</div>
+        <h1>RAG Production Monitor</h1>
+      </div>
+      <div class="header-status">
+        <div class="health-indicator" id="health-indicator">
+          <div class="health-dot"></div>
+          <span id="health-text">Healthy</span>
+        </div>
+        <div class="header-time" id="header-time"></div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Left Column — Upload + Query Interface -->
+      <div class="left-column">
+
+        <!-- Document Upload -->
+        <section class="glass-card upload-section">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">📄</span> Document Upload</h2>
+          </div>
+          <div class="upload-zone" id="upload-zone">
+            <span class="upload-icon">☁️</span>
+            <div class="upload-text">Drag & drop .txt, .md, or .pdf files here</div>
+            <div class="upload-hint">or click to browse</div>
+            <input type="file" id="file-input" accept=".txt,.md,.pdf" multiple>
+            <button class="btn-browse" id="btn-browse">Browse Files</button>
+          </div>
+          <div class="uploaded-documents" style="margin-top: 1rem;">
+            <h3>Recently Uploaded</h3>
+            <ul id="uploaded-documents-list" class="doc-list">
+              <!-- Rendered via JS -->
+              <li style="color: var(--text-secondary); font-size: 0.9rem;">No documents recently uploaded</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- RAG Pipeline Explainer -->
+        <section class="glass-card pipeline-section">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">⚙️</span> RAG Pipeline Process</h2>
+          </div>
+          <div class="pipeline-explainer">
+            <div class="pipeline-track">
+              
+              <div class="pipeline-step" id="step-preprocess">
+                <div class="step-icon">1</div>
+                <div class="step-details">
+                  <div class="step-name">Preprocess</div>
+                  <div class="step-desc">Clean query</div>
+                </div>
+              </div>
+
+              <div class="pipeline-connector" id="conn-1"></div>
+
+              <div class="pipeline-step" id="step-retrieve">
+                <div class="step-icon">2</div>
+                <div class="step-details">
+                  <div class="step-name">Retrieve</div>
+                  <div class="step-desc">Vector Search</div>
+                </div>
+              </div>
+
+              <div class="pipeline-connector" id="conn-2"></div>
+
+              <div class="pipeline-step" id="step-rerank">
+                <div class="step-icon">3</div>
+                <div class="step-details">
+                  <div class="step-name">Rerank</div>
+                  <div class="step-desc">Cross-Encoder</div>
+                </div>
+              </div>
+
+              <div class="pipeline-connector" id="conn-3"></div>
+
+              <div class="pipeline-step" id="step-assemble">
+                <div class="step-icon">4</div>
+                <div class="step-details">
+                  <div class="step-name">Assemble</div>
+                  <div class="step-desc">Stitch context</div>
+                </div>
+              </div>
+
+              <div class="pipeline-connector" id="conn-4"></div>
+
+              <div class="pipeline-step" id="step-generate">
+                <div class="step-icon">5</div>
+                <div class="step-details">
+                  <div class="step-name">Generate</div>
+                  <div class="step-desc">Qwen LLM</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Query Interface -->
+        <section class="glass-card query-section">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">🔍</span> Ask a Question</h2>
+          </div>
+          <div class="query-input-wrapper">
+            <textarea class="query-textarea" id="query-input" placeholder="Ask a question about your documents..." rows="3"></textarea>
+          </div>
+          <div class="query-actions">
+            <button class="btn-submit" id="btn-submit">
+              <span>▶</span> Submit Query
+            </button>
+            <span class="query-hint">Press <kbd>⌘</kbd> + <kbd>Enter</kbd> to submit</span>
+          </div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading-container" id="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text">Processing query through RAG pipeline...</div>
+        </div>
+
+        <!-- Response Card -->
+        <section class="glass-card response-section">
+          <div class="response-card" id="response-card">
+            <div class="card-header">
+              <h2 class="card-title"><span class="icon">💬</span> Response</h2>
+              <span class="response-latency" id="response-latency"></span>
+            </div>
+            <div class="response-answer" id="response-answer"></div>
+
+            <!-- Citations -->
+            <div class="citations-list" id="citations-list">
+              <h4>📎 Sources</h4>
+              <div id="citations-container"></div>
+            </div>
+
+            <!-- Meta Row -->
+            <div class="response-meta">
+              <span class="response-cost" id="response-cost"></span>
+              <div class="feedback-buttons">
+                <button class="btn-feedback thumbs-up" id="btn-thumbs-up" title="Helpful">👍</button>
+                <button class="btn-feedback thumbs-down" id="btn-thumbs-down" title="Not helpful">👎</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="response-empty">
+            <div class="empty-icon">💡</div>
+            <div class="empty-text">Ask a question to see the RAG pipeline in action</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column — Monitoring Dashboard -->
+      <div class="right-column">
+
+        <!-- Card 1: Latency Breakdown -->
+        <section class="glass-card latency-breakdown">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">⏱️</span> Latency Breakdown</h2>
+            <span class="card-badge badge-live">● Live</span>
+          </div>
+          <div class="latency-stages">
+            <div class="latency-stage">
+              <span class="stage-label">Preprocessing</span>
+              <div class="stage-bar-container"><div class="stage-bar preprocessing" id="bar-preprocessing" style="width:0%"></div></div>
+              <span class="stage-value" id="val-preprocessing">—</span>
+            </div>
+            <div class="latency-stage">
+              <span class="stage-label">Retrieval</span>
+              <div class="stage-bar-container"><div class="stage-bar retrieval" id="bar-retrieval" style="width:0%"></div></div>
+              <span class="stage-value" id="val-retrieval">—</span>
+            </div>
+            <div class="latency-stage">
+              <span class="stage-label">Reranking</span>
+              <div class="stage-bar-container"><div class="stage-bar reranking" id="bar-reranking" style="width:0%"></div></div>
+              <span class="stage-value" id="val-reranking">—</span>
+            </div>
+            <div class="latency-stage">
+              <span class="stage-label">Assembly</span>
+              <div class="stage-bar-container"><div class="stage-bar assembly" id="bar-assembly" style="width:0%"></div></div>
+              <span class="stage-value" id="val-assembly">—</span>
+            </div>
+            <div class="latency-stage">
+              <span class="stage-label">Generation</span>
+              <div class="stage-bar-container"><div class="stage-bar generation" id="bar-generation" style="width:0%"></div></div>
+              <span class="stage-value" id="val-generation">—</span>
+            </div>
+          </div>
+          <div class="latency-total">
+            <span class="total-label">Total</span>
+            <span class="total-value" id="latency-total-value">—</span>
+          </div>
+        </section>
+
+        <!-- Card 2: Latency Trend -->
+        <section class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">📈</span> Latency Trend</h2>
+            <span class="card-badge badge-live">● Live</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="latency-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- Card 3: Cost Tracking -->
+        <section class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">💰</span> Cost Tracking</h2>
+          </div>
+          <div class="cost-card-content">
+            <div class="cost-chart-wrapper">
+              <div class="chart-container doughnut">
+                <canvas id="cost-chart"></canvas>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Chunks Indexed</div>
+              <div class="stat-value" id="stat-documents">--</div>
+              <div class="stat-desc">From your uploaded files</div>
+            </div>
+            <div class="cost-stat-item">
+              <div class="stat-value" id="cost-per-1k">$0.00</div>
+              <div class="stat-label">Cost / 1K Queries</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 4: Quality Metrics -->
+        <section class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">✅</span> Quality Metrics</h2>
+          </div>
+          <div class="quality-metrics">
+            <div class="quality-metric">
+              <div class="circular-progress" id="progress-feedback">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle class="progress-bg" cx="45" cy="45" r="38"/>
+                  <circle class="progress-fill" cx="45" cy="45" r="38" stroke="var(--accent-green)" stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+                </svg>
+                <div class="progress-value" id="val-feedback">—</div>
+              </div>
+              <span class="quality-label">Feedback Score</span>
+            </div>
+            <div class="quality-metric">
+              <div class="circular-progress" id="progress-citation">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle class="progress-bg" cx="45" cy="45" r="38"/>
+                  <circle class="progress-fill" cx="45" cy="45" r="38" stroke="var(--accent-blue)" stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+                </svg>
+                <div class="progress-value" id="val-citation">—</div>
+              </div>
+              <span class="quality-label">Citation Accuracy</span>
+            </div>
+            <div class="quality-metric">
+              <div class="circular-progress" id="progress-hallucination">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle class="progress-bg" cx="45" cy="45" r="38"/>
+                  <circle class="progress-fill" cx="45" cy="45" r="38" stroke="var(--accent-green)" stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+                </svg>
+                <div class="progress-value" id="val-hallucination">—</div>
+              </div>
+              <span class="quality-label">Hallucination Rate</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 5: Cache Performance -->
+        <section class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span class="icon">🗄️</span> Cache Performance</h2>
+          </div>
+          <div class="cache-content">
+            <div class="cache-hit-rate">
+              <div class="big-percentage" id="cache-hit-pct">—</div>
+              <div class="pct-label">Hit Rate</div>
+            </div>
+            <div class="cache-details">
+              <div class="cache-bar-row">
+                <span class="cache-bar-label">Hits</span>
+                <div class="cache-bar-track"><div class="cache-bar-fill hits" id="cache-hits-bar" style="width:0%"></div></div>
+                <span class="cache-bar-value" id="cache-hits-val">0</span>
+              </div>
+              <div class="cache-bar-row">
+                <span class="cache-bar-label">Misses</span>
+                <div class="cache-bar-track"><div class="cache-bar-fill misses" id="cache-misses-bar" style="width:0%"></div></div>
+                <span class="cache-bar-value" id="cache-misses-val">0</span>
+              </div>
+              <div class="cache-size-indicator">
+                Cache Size: <span id="cache-size">0 MB</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span class="footer-label">Production RAG Architecture</span>
+      <div class="footer-stats">
+        <div class="footer-stat">
+          <span class="stat-icon">📄</span>
+          <span>Documents:</span>
+          <span class="stat-value" id="footer-doc-count">0</span>
+        </div>
+        <div class="footer-stat">
+          <span class="stat-icon">🔍</span>
+          <span>Queries:</span>
+          <span class="stat-value" id="footer-query-count">0</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/query.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

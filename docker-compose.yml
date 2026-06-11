@@ -1,0 +1,57 @@
+# ============================================================
+# Production RAG System — Docker Compose
+# ============================================================
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: production-rag-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      # Persist vector database across restarts
+      - rag_chroma_data:/app/backend/chroma_db
+      # Persist monitoring database
+      - rag_monitoring_data:/app/backend/monitoring_data
+      # Mount data directory for document ingestion
+      - ./data:/app/data:ro
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+      - 8.8.4.4
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CHROMA_PERSIST_DIR=/app/backend/chroma_db
+      - MONITORING_DB_PATH=/app/backend/monitoring_data/monitoring.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend-next
+      dockerfile: Dockerfile
+    container_name: production-rag-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend-next/.env.local
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+volumes:
+  rag_chroma_data:
+    driver: local
+  rag_monitoring_data:
+    driver: local

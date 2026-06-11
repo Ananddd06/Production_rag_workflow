@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+*.md
+!README.md
+.env
+.env.local
+*.db
+chroma_db/
+node_modules/
+.DS_Store
+*.log
+.vscode/
+.idea/

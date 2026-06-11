@@ -1,0 +1,64 @@
+rag-system | 2026-06-11 09:34:47.148 | onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+rag-system | 2026-06-11 09:34:47.297 | INFO:     Started server process [1]
+rag-system | 2026-06-11 09:34:47.297 | INFO:     Waiting for application startup.
+rag-system | 2026-06-11 09:34:47.297 | 2026-06-11 04:04:47,297 [INFO] rag.main: Starting RAG pipeline initialisation …
+rag-system | 2026-06-11 09:34:47.297 | 2026-06-11 04:04:47,297 [INFO] sentence_transformers.SentenceTransformer: Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+frontend   | 2026-06-11 12:52:36.683 | 
+frontend   | 2026-06-11 12:52:36.683 | > frontend-next@0.1.0 start
+frontend   | 2026-06-11 12:52:36.683 | > next start
+frontend   | 2026-06-11 12:52:36.683 | 
+frontend   | 2026-06-11 12:52:36.962 | ▲ Next.js 16.2.9
+frontend   | 2026-06-11 12:52:36.962 | - Local:         http://localhost:3000
+frontend   | 2026-06-11 12:52:36.962 | - Network:       http://172.18.0.3:3000
+frontend   | 2026-06-11 12:52:36.962 | ✓ Ready in 148ms
+backend    | 2026-06-11 12:52:41.898 | onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+backend    | 2026-06-11 12:52:42.123 | INFO:     Started server process [1]
+backend    | 2026-06-11 12:52:42.123 | INFO:     Waiting for application startup.
+backend    | 2026-06-11 12:52:42.123 | 2026-06-11 07:22:42,123 [INFO] rag.main: Starting RAG pipeline initialisation …
+backend    | 2026-06-11 12:52:42.124 | 2026-06-11 07:22:42,124 [INFO] sentence_transformers.SentenceTransformer: Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+backend    | 2026-06-11 12:53:06.113 | 2026-06-11 07:23:06,112 [INFO] chromadb.telemetry.product.posthog: Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+backend    | 2026-06-11 12:53:06.408 | 2026-06-11 07:23:06,408 [ERROR] chromadb.telemetry.product.posthog: Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+backend    | 2026-06-11 12:53:06.409 | 2026-06-11 07:23:06,409 [ERROR] chromadb.telemetry.product.posthog: Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+backend    | 2026-06-11 12:53:06.417 | 2026-06-11 07:23:06,416 [INFO] storage.vector_store: VectorStore ready  dir=/app/backend/chroma_db  collection=rag_documents  count=62
+backend    | 2026-06-11 12:53:06.432 | 2026-06-11 07:23:06,432 [INFO] pipeline.reranker: loading cross‑encoder model cross-encoder/ms-marco-MiniLM-L-6-v2 …
+backend    | 2026-06-11 12:53:28.667 | 2026-06-11 07:23:28,666 [INFO] sentence_transformers.cross_encoder.CrossEncoder: Use pytorch device: cpu
+backend    | 2026-06-11 12:53:28.667 | 2026-06-11 07:23:28,667 [INFO] pipeline.reranker: cross‑encoder model loaded
+backend    | 2026-06-11 12:53:28.668 | 2026-06-11 07:23:28,668 [INFO] pipeline.generator: LLMGenerator initialised  model=Qwen/Qwen2.5-7B-Instruct
+backend    | 2026-06-11 12:53:28.671 | 2026-06-11 07:23:28,671 [INFO] rag.main: RAG pipeline initialisation complete.
+backend    | 2026-06-11 12:53:28.672 | INFO:     Application startup complete.
+backend    | 2026-06-11 12:53:28.675 | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend    | 2026-06-11 12:53:32.073 | INFO:     127.0.0.1:47144 - "GET /api/health HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:32.194 | INFO:     192.168.65.1:41854 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:37.328 | INFO:     192.168.65.1:59502 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:37.333 | 2026-06-11 07:23:37,332 [ERROR] chromadb.telemetry.product.posthog: Failed to send telemetry event CollectionGetEvent: capture() takes 1 positional argument but 3 were given
+backend    | 2026-06-11 12:53:37.361 | INFO:     192.168.65.1:54331 - "GET /api/documents HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:46.647 | INFO:     192.168.65.1:50333 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:46.655 | INFO:     192.168.65.1:58426 - "GET /api/documents HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:53:55.769 | Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+backend    | 2026-06-11 12:53:55.769 | Batches: 100%|██████████| 1/1 [00:00<00:00,  6.14it/s]
+backend    | 2026-06-11 12:53:55.769 | Batches: 100%|██████████| 1/1 [00:00<00:00,  6.13it/s]
+backend    | 2026-06-11 12:53:55.770 | 2026-06-11 07:23:55,769 [ERROR] chromadb.telemetry.product.posthog: Failed to send telemetry event CollectionQueryEvent: capture() takes 1 positional argument but 3 were given
+backend    | 2026-06-11 12:53:55.793 | 2026-06-11 07:23:55,792 [WARNING] chromadb.segment.impl.vector.local_persistent_hnsw: Add of existing embedding ID: machine_learning.md_228e2cf3aa0606f1_0
+backend    | 2026-06-11 12:53:55.793 | 2026-06-11 07:23:55,793 [WARNING] chromadb.segment.impl.vector.local_persistent_hnsw: Add of existing embedding ID: machine_learning.md_daab8f08d3be0656_1
+backend    | 2026-06-11 12:53:55.793 | 2026-06-11 07:23:55,793 [WARNING] chromadb.segment.impl.vector.local_persistent_hnsw: Add of existing embedding ID: machine_learning.md_15328f44963e429f_2
+backend    | 2026-06-11 12:53:55.818 | 2026-06-11 07:23:55,817 [INFO] pipeline.retriever: BM25 index built with 62 documents
+backend    | 2026-06-11 12:53:55.818 | 2026-06-11 07:23:55,818 [INFO] pipeline.retriever: retrieved 5 docs  semantic=5  bm25=5  query='explain the computer vision'
+backend    | 2026-06-11 12:53:56.592 | Batches:   0%|          | 0/1 [00:00<?, ?it/s]
+backend    | 2026-06-11 12:53:56.592 | Batches: 100%|██████████| 1/1 [00:00<00:00,  1.30it/s]
+backend    | 2026-06-11 12:53:56.594 | 2026-06-11 07:23:56,592 [INFO] pipeline.reranker: reranked 5 → 5 docs in 773.6 ms  top_score=1.0000
+backend    | 2026-06-11 12:53:56.595 | 2026-06-11 07:23:56,595 [INFO] pipeline.assembler: assembled context  chunks=5→5→5  tokens≈1979  query='explain the computer vision'
+backend    | 2026-06-11 12:54:00.414 | 2026-06-11 07:24:00,414 [INFO] pipeline.generator: generated answer  model=Qwen/Qwen2.5-7B-Instruct  tokens=2929  time=3817ms  citations=[]  query='explain the computer vision'
+backend    | 2026-06-11 12:54:00.431 | INFO:     192.168.65.1:37581 - "POST /api/query HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:00.444 | INFO:     192.168.65.1:33956 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:00.447 | INFO:     192.168.65.1:37581 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:02.203 | INFO:     127.0.0.1:53426 - "GET /api/health HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:06.641 | INFO:     192.168.65.1:36181 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:12.212 | INFO:     192.168.65.1:36132 - "POST /api/feedback HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:12.226 | INFO:     192.168.65.1:36132 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:16.635 | INFO:     192.168.65.1:36132 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:26.636 | INFO:     192.168.65.1:25995 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:32.340 | INFO:     127.0.0.1:49712 - "GET /api/health HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:36.649 | INFO:     192.168.65.1:35569 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:46.658 | INFO:     192.168.65.1:58321 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:54:56.757 | INFO:     192.168.65.1:21101 - "GET /api/metrics/dashboard HTTP/1.1" 200 OK
+backend    | 2026-06-11 12:55:02.451 | INFO:     127.0.0.1:48614 - "GET /api/health HTTP/1.1" 200 OK
